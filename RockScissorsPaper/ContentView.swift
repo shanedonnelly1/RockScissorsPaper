@@ -10,30 +10,36 @@ import SwiftUI
 
 struct ContentView: View {
     var moves = ["Rock", "Paper", "Scissors"]
-    @State private var currentAppChoice = 0
-    @State private var playerToWin = true
+    @State private var currentAppChoice = Int.random(in: 0 ..< 3)
+    @State private var playerToWin = Bool.random()
     @State private var score = 0
     @State private var alertTitle = ""
     @State private var showingAlert = false
     @State private var alertMessage = ""
+    @State private var roundCount = 0
     
     var body: some View {
         VStack {
-            VStack {
-                Text("Score: \(score)")
-                Text("You must decide how to:")
-                Text(playerToWin ? "Win" : "Lose")
-                Text("When app chooses \(moves[currentAppChoice])")
-            }
-            
-            ForEach(0 ..< moves.count) { move in
-                Button(action: {
-                    self.playerChooses(move)
-                }){
-                    Text(self.moves[move])
+            if (roundCount < 2) {
+                VStack {
+                    Text("Score: \(score)")
+                    Text("You must decide how to:")
+                    Text(playerToWin == true ? "Win" : "Lose")
+                    Text("When app chooses \(moves[currentAppChoice])")
                 }
+                
+                ForEach(0 ..< moves.count) { move in
+                    Button(action: {
+                        self.playerChooses(move)
+                    }){
+                        Text(self.moves[move])
+                    }
+                }
+                Spacer()
+            } else {
+                Text("Game Over")
+                Text("You scored: \(score)")
             }
-            Spacer()
         }
         .alert(isPresented: $showingAlert) {
             Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("Continue")) {
@@ -61,9 +67,10 @@ struct ContentView: View {
                 playerLosesRound()
             }
         default:
-            if playerToWin && moves[move] == "Scissors" {
+            // Case Scissors
+            if playerToWin && moves[move] == "Rock" {
                 playerWinsRound()
-            } else if playerToWin == false && moves[move] == "Rock" {
+            } else if playerToWin == false && moves[move] == "Paper" {
                 playerWinsRound()
             } else {
                 playerLosesRound()
@@ -87,6 +94,7 @@ struct ContentView: View {
     func startRound() {
         currentAppChoice = Int.random(in: 0 ..< moves.count)
         playerToWin = Bool.random()
+        roundCount += 1
     }
 }
 
