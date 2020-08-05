@@ -8,8 +8,25 @@
 
 import SwiftUI
 
+enum RockPaperScissors {
+    case Rock, Paper, Scissors
+}
+
+extension RockPaperScissors: CustomStringConvertible {
+    var description: String {
+        switch self {
+        case .Rock:
+            return "Rock"
+        case .Paper:
+            return "Paper"
+        case .Scissors:
+            return "Scissors"
+        }
+    }
+}
+
 struct ContentView: View {
-    var moves = ["Rock", "Paper", "Scissors"]
+    var moves: [RockPaperScissors] = [.Rock, .Paper, .Scissors]
     @State private var currentAppChoice = Int.random(in: 0 ..< 3)
     @State private var playerToWin = Bool.random()
     @State private var score = 0
@@ -20,19 +37,26 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            if (roundCount < 2) {
+            if roundCount == 0 {
+                Text("Ready to play?")
+                Button(action: {
+                    self.startGame()
+                }) {
+                    Text("Let's play!")
+                }
+            } else if roundCount <= 10 {
                 VStack {
                     Text("Score: \(score)")
                     Text("You must decide how to:")
                     Text(playerToWin == true ? "Win" : "Lose")
-                    Text("When app chooses \(moves[currentAppChoice])")
+                    Text("When app chooses \(moves[currentAppChoice].description)")
                 }
                 
                 ForEach(0 ..< moves.count) { move in
                     Button(action: {
                         self.playerChooses(move)
                     }){
-                        Text(self.moves[move])
+                        Text("\(self.moves[move].description)")
                     }
                 }
                 Spacer()
@@ -50,27 +74,27 @@ struct ContentView: View {
     
     func playerChooses(_ move: Int) {
         switch moves[currentAppChoice] {
-        case "Rock":
-            if playerToWin && moves[move] == "Paper" {
+        case .Rock:
+            if playerToWin && moves[move] == .Paper {
                 playerWinsRound()
-            } else if playerToWin == false && moves[move] == "Scissors" {
+            } else if playerToWin == false && moves[move] == .Scissors {
                 playerWinsRound()
             } else {
                 playerLosesRound()
             }
-        case "Paper":
-            if playerToWin && moves[move] == "Scissors" {
+        case .Paper:
+            if playerToWin && moves[move] == .Scissors {
                 playerWinsRound()
-            } else if playerToWin == false && moves[move] == "Rock" {
+            } else if playerToWin == false && moves[move] == .Rock {
                 playerWinsRound()
             } else {
                 playerLosesRound()
             }
         default:
             // Case Scissors
-            if playerToWin && moves[move] == "Rock" {
+            if playerToWin && moves[move] == .Rock {
                 playerWinsRound()
-            } else if playerToWin == false && moves[move] == "Paper" {
+            } else if playerToWin == false && moves[move] == .Paper {
                 playerWinsRound()
             } else {
                 playerLosesRound()
@@ -89,6 +113,12 @@ struct ContentView: View {
         alertTitle = "Wrong!"
         alertMessage = "It's a good guess, but it's not quite right. "
         score -= 1
+    }
+    
+    func startGame() {
+        currentAppChoice = Int.random(in: 0 ..< moves.count)
+        playerToWin = Bool.random()
+        roundCount = 1
     }
     
     func startRound() {
