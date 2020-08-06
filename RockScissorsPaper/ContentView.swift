@@ -8,26 +8,21 @@
 
 import SwiftUI
 
-enum RockPaperScissors {
-    case Rock, Paper, Scissors
+enum RockPaperScissors: String, CaseIterable {
+    case Rock = "Rock"
+    case Paper = "Paper"
+    case Scissors = "Scissors"
 }
 
 extension RockPaperScissors: CustomStringConvertible {
     var description: String {
-        switch self {
-        case .Rock:
-            return "Rock"
-        case .Paper:
-            return "Paper"
-        case .Scissors:
-            return "Scissors"
-        }
+        return self.rawValue
     }
 }
 
 struct ContentView: View {
-    var moves: [RockPaperScissors] = [.Rock, .Paper, .Scissors]
-    @State private var currentAppChoice = Int.random(in: 0 ..< 3)
+    var moves: [RockPaperScissors] = RockPaperScissors.allCases
+    @State private var currentAppChoice = Int.random(in: 0 ..< RockPaperScissors.allCases.count)
     @State private var playerToWin = Bool.random()
     @State private var score = 0
     @State private var alertTitle = ""
