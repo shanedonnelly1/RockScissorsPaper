@@ -8,15 +8,22 @@
 
 import SwiftUI
 
-enum RockPaperScissors: String, CaseIterable {
-    case Rock = "Rock"
-    case Paper = "Paper"
-    case Scissors = "Scissors"
+enum RockPaperScissors: CaseIterable {
+    case Rock
+    case Paper
+    case Scissors
 }
 
 extension RockPaperScissors: CustomStringConvertible {
     var description: String {
-        return self.rawValue
+        switch self {
+        case .Rock:
+            return "Rock"
+        case .Paper:
+            return "Paper"
+        case .Scissors:
+            return "Scissors"
+        }
     }
 }
 
@@ -68,28 +75,15 @@ struct ContentView: View {
     }
     
     func playerChooses(_ move: Int) {
-        switch moves[currentAppChoice] {
-        case .Rock:
-            if playerToWin && moves[move] == .Paper {
-                playerWinsRound()
-            } else if playerToWin == false && moves[move] == .Scissors {
+        // Use position in moves array to determine what beats what.
+        if playerToWin {
+            if (currentAppChoice == 2 && move == 0) || (move - 1 == currentAppChoice) {
                 playerWinsRound()
             } else {
                 playerLosesRound()
             }
-        case .Paper:
-            if playerToWin && moves[move] == .Scissors {
-                playerWinsRound()
-            } else if playerToWin == false && moves[move] == .Rock {
-                playerWinsRound()
-            } else {
-                playerLosesRound()
-            }
-        default:
-            // Case Scissors
-            if playerToWin && moves[move] == .Rock {
-                playerWinsRound()
-            } else if playerToWin == false && moves[move] == .Paper {
+        } else {
+            if (move == 2 && currentAppChoice == 0) || (currentAppChoice - 1 == move) {
                 playerWinsRound()
             } else {
                 playerLosesRound()
